@@ -64,6 +64,9 @@ public class Cadastro {
 			Assert.assertEquals(2, allSelectedOptions.size());
 			
 			
+			
+			
+			
 			/*
 			elemento.deselectByVisibleText("Natacao");
 			elemento.deselectByVisibleText("Corrida");
@@ -74,6 +77,16 @@ public class Cadastro {
 			
 			*/
 			driver.findElement(By.id("elementosForm:cadastrar")).click();
+			
+			
+			Assert.assertTrue( driver.findElement(By.id("resultado")).getText().startsWith("Cadastrado"));//verifica se o bloco inicia com Cadastrado -->
+			Assert.assertTrue(driver.findElement(By.id("descNome")).getText().endsWith("Augusto"));//verifica se o bloco termina com Augusto --> Sufixo
+			Assert.assertEquals("Sobrenome: Nunes", driver.findElement(By.id("descSobreNome")).getText());
+			Assert.assertEquals("Sexo: Masculino", driver.findElement(By.id("descSexo")).getText());
+			Assert.assertEquals("Comida: Carne Pizza", driver.findElement(By.id("descComida")).getText());
+			Assert.assertEquals("Escolaridade: superior", driver.findElement(By.id("descEscolaridade")).getText());
+			Assert.assertEquals("Esportes: Natacao Corrida", driver.findElement(By.id("descEsportes")).getText());
+			Assert.assertEquals("Sugestoes: O presente usuario necessita necessariamente de doce de jaca", driver.findElement(By.id("descSugestoes")).getText());
 			/*
 
 			// aqui ocorre a mudação de foco
