@@ -1,93 +1,56 @@
-import static org.junit.Assert.assertEquals;
-
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class TestAlert {
+	
+	private WebDriver driver;
+	private DSL dsl;
+	
+	@Before
+	public void inicializa(){
+		driver = new FirefoxDriver();
+		driver.manage().window().setSize(new Dimension(1200, 765));
+		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+		dsl = new DSL(driver);
+	}
+	
+	@After
+	public void finaliza(){
+		driver.quit();
+	}
 
 	@Test
-	@Ignore
-	public void interacaoComAlert() {
-
-		WebDriver driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1200, 1100));
-		driver.get("C:\\Users\\denty\\Desktop\\tutorial driver\\mod3\\componentes.html");
-
-		// ocorre o click no botao de alert
-		driver.findElement(By.id("alert")).click();
-
-		// aqui ocorre a mudação de foco
-		Alert alert = driver.switchTo().alert();
-
-		String texto = alert.getText();
-
-		// driver.quit();
+	public void deveInteragirComAlertSimples(){
+		dsl.clicarBotao("alert");
+		String texto = dsl.alertaObterTextoEAceita(); 
 		Assert.assertEquals("Alert Simples", texto);
-		alert.accept();
-
-		driver.findElement(By.id("elementosForm:nome")).sendKeys(texto);
-		driver.quit();
-	}
-
-	
-	
-	@Test
-	@Ignore
-	public void interacaoComConfirme() {
-
-		WebDriver driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1200, 1100));
-		driver.get("C:\\Users\\denty\\Desktop\\tutorial driver\\mod3\\componentes.html");
-
-		// ocorre o click no botao de alert
-		driver.findElement(By.id("confirm")).click();
-
-		// aqui ocore a mudação de foco
-		Alert alert = driver.switchTo().alert();
-
-
 		
-		Assert.assertEquals("Confirm Simples", alert.getText());
-		alert.accept();
-		Assert.assertEquals("Confirmado", alert.getText());
-		alert.accept();
-
-		driver.findElement(By.id("confirm")).click();
-
-		// aqui ocore a mudação de foco
-		alert = driver.switchTo().alert();
-		Assert.assertEquals("Confirm Simples", alert.getText());
-		alert.dismiss();;
-		Assert.assertEquals("Negado", alert.getText());
-		alert.accept();
-		driver.quit();
+		dsl.escrever("elementosForm:nome", texto);
 	}
-
+	
 	@Test
-	public void interacaoComPrompt() {
-
-		WebDriver driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1200, 1100));
-		driver.get("C:\\Users\\denty\\Desktop\\tutorial driver\\mod3\\componentes.html");
-
-		driver.findElement(By.id("prompt")).click();
-		Alert alert = driver.switchTo().alert();
-		Assert.assertEquals("Digite um numero",alert.getText());
-		alert.sendKeys("12");
-		alert.accept();
-		Assert.assertEquals("Era 12?", alert.getText());
-		alert.accept();
-		Assert.assertEquals(":D", alert.getText());
-	
-		driver.quit();
-	
-	
+	public void deveInteragirComAlertConfirm(){
+		dsl.clicarBotao("confirm");
+		Assert.assertEquals("Confirm Simples", dsl.alertaObterTextoEAceita());
+		Assert.assertEquals("Confirmado", dsl.alertaObterTextoEAceita());
+		
+		dsl.clicarBotao("confirm");
+		Assert.assertEquals("Confirm Simples", dsl.alertaObterTextoENega());
+		Assert.assertEquals("Negado", dsl.alertaObterTextoENega());
 	}
 	
+	@Test
+	public void deveInteragirComAlertPrompt(){
+		dsl.clicarBotao("prompt");
+		Assert.assertEquals("Digite um numero", dsl.alertaObterTexto());
+		dsl.alertaEscrever("12");
+		Assert.assertEquals("Era 12?", dsl.alertaObterTextoEAceita());
+		Assert.assertEquals(":D", dsl.alertaObterTextoEAceita());
+	}
 }

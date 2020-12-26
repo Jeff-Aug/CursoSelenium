@@ -1,62 +1,60 @@
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
 
 public class TestJanelas {
+	
+	private WebDriver driver;
+	private DSL dsl;
 
-	@Test 
-	@Ignore
-	public void TestComJanelas() {//lidando com janelas extenas a pagina inicial
-		
-		WebDriver driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1200, 1111));
-		driver.get("C:\\Users\\denty\\Desktop\\tutorial driver\\mod3\\componentes.html");
-		
-		driver.findElement(By.id("buttonPopUpEasy")).click();//a parti do click no botão o foco deve mudar
-		
-		driver.switchTo().window("Popup");//o foco mudou para a janela cujo o nome é popup
-		
-		driver.findElement(By.tagName("textarea")).sendKeys("Deu Certo?");
-		
-		
-		driver.close();
-		
-		//mudancao de foco
-		driver.switchTo().window("");
-		driver.findElement(By.tagName("textarea")).sendKeys(Keys.chord("e agora?"));
-		
-		driver.quit();
-		//não é sempres que conseguimos achar o indetificador da pagina
-		
+	@Before
+	public void inicializa(){
+		driver = new FirefoxDriver();
+		driver.manage().window().setSize(new Dimension(1200, 765));
+		driver.get("file:///" + System.getProperty("user.dir") + "/src/main/resources/componentes.html");
+		dsl = new DSL(driver);
 	}
 	
-	@Test 
-	public void TestComJanelasSemindetificador() {//lidando com janelas extenas a pagina inicial cuja não possui indetificadores
-		
-		WebDriver driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1200, 1111));
-		driver.get("C:\\Users\\denty\\Desktop\\tutorial driver\\mod3\\componentes.html");
-		
-		driver.findElement(By.id("buttonPopUpHard")).click();
+	@After
+	public void finaliza(){
+		driver.quit();
+	}
+
+	@Test
+	public void deveInteragirComFrames(){
+		dsl.entrarFrame("frame1");
+		dsl.clicarBotao("frameButton");
+		String msg = dsl.alertaObterTextoEAceita();
+		Assert.assertEquals("Frame OK!", msg);
+
+		dsl.sairFrame();
+		dsl.escrever("elementosForm:nome", msg);
+	}
+	
+	@Test
+	public void deveInteragirComJanelas(){
+		dsl.clicarBotao("buttonPopUpEasy");
+		dsl.trocarJanela("Popup");
+		dsl.escrever(By.tagName("textarea"), "Deu certo?");
+		driver.close();
+		dsl.trocarJanela("");
+		dsl.escrever(By.tagName("textarea"), "e agora?");
+	}
+	
+	@Test
+	public void deveInteragirComJanelasSemTitulo(){
+		dsl.clicarBotao("buttonPopUpHard");
 		System.out.println(driver.getWindowHandle());
 		System.out.println(driver.getWindowHandles());
-		
-		driver.switchTo().window((String)driver.getWindowHandles().toArray()[1]);
-		driver.findElement(By.tagName("textarea")).sendKeys(Keys.chord("Deu certo?"));
-		driver.switchTo().window((String)driver.getWindowHandles().toArray()[0]);
-		driver.findElement(By.tagName("textarea")).sendKeys(Keys.chord("E agora?"));
-		
-		
-		driver.switchTo().window((String)driver.getWindowHandles().toArray()[1]);
-		driver.findElement(By.tagName("textarea")).sendKeys(Keys.chord(" não sei"));
-		driver.switchTo().window((String)driver.getWindowHandles().toArray()[0]);
-		driver.findElement(By.tagName("textarea")).sendKeys(Keys.chord("mas sera que deu msm"));
-		
-		driver.quit();
-		
+		dsl.trocarJanela((String) driver.getWindowHandles().toArray()[1]);
+		dsl.escrever(By.tagName("textarea"), "Deu certo?");
+		dsl.trocarJanela((String) driver.getWindowHandles().toArray()[0]);
+		dsl.escrever(By.tagName("textarea"), "e agora?");
 	}
 }
