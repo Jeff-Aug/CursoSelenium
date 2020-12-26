@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -166,4 +167,28 @@ public class DSL {
 	public void trocarJanela(String id) {
 		driver.switchTo().window(id);
 	}
+	
+	
+	
+	/*******************Javascripts***************************/
+	
+	public Object executaJS(String cmd,Object... param) {
+		
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		
+		return js.executeScript(cmd, param);
+		
+		//js.executeScript("alert('Testando js via selenium')");
+		//js.executeScript("document.getElementById('elementosForm:nome').value = 'Escrito via js'");
+		//js.executeScript("document.getElementById('elementosForm:sobrenome').type = 'radio'");
+		
+		//WebElement elemento = driver.findElement(By.id("elementosForm:nome"));
+		
+	//	js.executeScript("arguments[0].style.border = arguments[1]", elemento,"solid 4px red");
+		
+		
+		
+	}
+	
+	
 }
