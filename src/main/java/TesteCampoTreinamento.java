@@ -28,7 +28,7 @@ public class TesteCampoTreinamento {
 	
 	@After
 	public void finaliza(){
-		//driver.quit();
+		driver.quit();
 	}
 	
 	@Test
@@ -125,6 +125,14 @@ public class TesteCampoTreinamento {
 		WebElement elemento = driver.findElement(By.id("elementosForm:nome"));
 		
 		js.executeScript("arguments[0].style.border = arguments[1]", elemento,"solid 4px red");
+	}
+	
+	
+	@Test 
+	public void deveClicarBotaoTabela() {
+		
+		dsl.clicarBotaoTabela("Nome", "Maria", "Botao");
+		
 	}
 	
 }

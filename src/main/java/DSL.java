@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.ClickAndHoldAction;
 import org.openqa.selenium.support.ui.Select;
 
 public class DSL {
@@ -33,9 +34,15 @@ public class DSL {
 	
 	/********* Radio e Check ************/
 	
-	public void clicarRadio(String id) {
-		driver.findElement(By.id(id)).click();
+	public void clicarRadio(By by) {
+		driver.findElement((by)).click();
 	}
+	public void clicarRadio(String id) {
+		clicarRadio(By.id(id));
+	}
+	
+	
+	
 	
 	public boolean isRadioMarcado(String id){
 		return driver.findElement(By.id(id)).isSelected();
@@ -97,6 +104,13 @@ public class DSL {
 			}
 		}
 		return false;
+	}
+	
+	
+	public void selecionarComboPrime(String Radical,String valor) {
+		
+		clicarRadio(By.xpath("//*[@id='"+Radical+"_input']/../..//span"));
+		clicarRadio(By.xpath("//*[@id='"+Radical+"_items']//li[.='"+valor+"']"));
 	}
 	
 	/********* Botao ************/
@@ -190,5 +204,60 @@ public class DSL {
 		
 	}
 	
+	/*******************Tabela***************************/
+
+
+	public void clicarBotaoTabela(String colunaBusca,String valor, String colunaBotao) {
+		//procuraa coluna do registro
+		WebElement tabela = driver.findElement(By.xpath("//*[@id='elementosForm:tableUsuarios']"));//vai de encontra a tabela refente a esse endereço
+//		tabela.findElements("//th");//se for colocado desse jeito a busca sera iniciada desdo começo do html
+		
+		int idColuna = obterIndiceColuna(colunaBusca, tabela);
+		
+		//encontra a linha do registro
+		
+		int idLinha = obterIndiceLinha(valor, tabela, idColuna);
+
+		//procura coluna do botao
+		
+		int idColunaBotao = obterIndiceColuna(colunaBotao, tabela);
+		
+		//Clicar no botao
+		WebElement celula = tabela.findElement(By.xpath(".//tr["+idLinha +"]/td["+ idColunaBotao +"]"));
+		celula.findElement(By.xpath(".//input")).click();
+		
+	}
+
 	
+	
+	protected int obterIndiceLinha(String valor, WebElement tabela, int idColuna) {
+		List<WebElement> linhas = tabela.findElements(By.xpath("./tbody/tr/td["+idColuna+"]"));
+		
+		int idLinha = -1;//Se o valor for de 0 pra cima significa que o valor foi encontrado,por isso o valor negativo
+		for(int i=0 ; i < linhas.size(); i++ ) {
+			if(linhas.get(i).getText().equals(valor)) {
+				idLinha = i+1;
+				break;
+			}
+		}
+		return idLinha;
+	}
+
+	
+	
+	protected int obterIndiceColuna(String coluna, WebElement tabela) {
+		List<WebElement> colunas = tabela.findElements(By.xpath(".//th"));//.//th a busca ocorre a parti do diretorio corrente
+		
+		int idColuna = -1;//Se o valor for de 0 pra cima significa que o valor foi encontrado,por isso o valor negativo
+				
+		for(int i=0 ; i < colunas.size(); i++ ) {
+			if(colunas.get(i).getText().equals(coluna)) {
+				idColuna = i+1;
+				break;
+			}
+		}
+		return idColuna;
+	}
+
+
 }
